@@ -28,7 +28,6 @@ export const useJobsStore = create<JobsState>()(
         try {
           set({ status: 'loading', error: null })
           const jobs = await fetchJobs()
-
           set({
             jobs,
             status: jobs.length === 0 ? 'empty' : 'idle',
@@ -45,15 +44,11 @@ export const useJobsStore = create<JobsState>()(
         const { favorites } = get()
         const exists = favorites.some((fav) => fav.id === job.id)
 
-        if (exists) {
-          set({
-            favorites: favorites.filter((fav) => fav.id !== job.id),
-          })
-        } else {
-          set({
-            favorites: [...favorites, job],
-          })
-        }
+        const nextFavorites = exists
+          ? favorites.filter((fav) => fav.id !== job.id)
+          : [...favorites, job]
+
+        set({ favorites: nextFavorites })
       },
 
       isFavorite(jobId) {
@@ -61,10 +56,9 @@ export const useJobsStore = create<JobsState>()(
       },
     }),
     {
-      name: 'jobs-favorites-storage',
-      storage: createJSONStorage(() => AsyncStorage),
-      // solo queremos persistir favoritos; jobs se vuelven a cargar desde la API
+      name: 'jobs-store',
       partialize: (state) => ({ favorites: state.favorites }),
-    },
-  ),
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
 )

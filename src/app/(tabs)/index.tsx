@@ -4,7 +4,8 @@ import { JobListItem } from '@/src/features/jobs/components/JobListItem'
 import { useJobsStore } from '@/src/features/jobs/state/jobsStore'
 
 export default function JobsListScreen() {
-  const { jobs, status, error, loadJobs, toggleFavorite, isFavorite } = useJobsStore()
+  const { jobs, status, error, loadJobs, toggleFavorite, isFavorite } =
+    useJobsStore()
 
   useEffect(() => {
     loadJobs()
