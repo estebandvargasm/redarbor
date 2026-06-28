@@ -4,12 +4,41 @@
  */
 import axios from 'axios'
 import type { JobItem } from '../types/job'
-import { mapRemotiveJobToJobItem } from './remotiveMapper'
 
 const REMOTIVE_BASE_URL = 'https://remotive.com/api'
 
+type RemotiveJob = {
+  id: number
+  url: string
+  title: string
+  company_name: string
+  company_logo?: string | null
+  category: string
+  job_type: string
+  publication_date: string
+  candidate_required_location: string
+  salary?: string | null
+  description: string
+}
+
 type RemotiveJobsResponse = {
-  jobs: any[]
+  jobs: RemotiveJob[]
+}
+
+function mapToJobItem(job: RemotiveJob): JobItem {
+  return {
+    id: job.id,
+    title: job.title,
+    companyName: job.company_name,
+    companyLogoUrl: job.company_logo ?? undefined,
+    category: job.category,
+    jobType: job.job_type,
+    publicationDate: job.publication_date,
+    candidateLocation: job.candidate_required_location,
+    salary: job.salary ?? undefined,
+    descriptionHtml: job.description,
+    applyUrl: job.url,
+  }
 }
 
 export async function fetchJobs(): Promise<JobItem[]> {
@@ -19,7 +48,7 @@ export async function fetchJobs(): Promise<JobItem[]> {
 
   const { jobs } = response.data
 
-  return jobs.map(mapRemotiveJobToJobItem)
+  return jobs.map(mapToJobItem)
 }
 
 type RemotiveCategory = { id: number; name: string; slug: string }
