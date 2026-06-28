@@ -3,6 +3,7 @@ import { Tabs } from 'expo-router'
 import Colors from '@/src/shared/theme/Colors'
 import { useColorScheme } from '@/src/shared/components/useColorScheme'
 import { useClientOnlyValue } from '@/src/shared/components/useClientOnlyValue'
+import CustomTabBar from '@/src/shared/components/CustomTabBar'
 
 export default function TabLayout() {
   const colorScheme = useColorScheme()
@@ -10,24 +11,16 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.tabIconDefault,
-        tabBarStyle: {
-          backgroundColor: colors.tabBar,
-          paddingBottom: 8,
-          paddingTop: 8,
-          height: 60,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '600',
-        },
         headerShown: useClientOnlyValue(false, true),
+
         headerTintColor: colors.text,
+
         headerStyle: {
           backgroundColor: colors.background,
         },
+
         headerTitleStyle: {
           fontWeight: '700',
           fontSize: 20,
@@ -39,16 +32,25 @@ export default function TabLayout() {
         options={{
           title: 'Trabajos',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="briefcase-outline" size={size} color={color} />
+            <Ionicons
+              name="briefcase-outline"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
+
       <Tabs.Screen
         name="favoritesScreen"
         options={{
           title: 'Favoritos',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="heart-outline" size={size} color={color} />
+            <Ionicons
+              name="heart-outline"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
