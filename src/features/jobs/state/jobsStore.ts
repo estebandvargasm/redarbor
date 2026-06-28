@@ -10,13 +10,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { JobItem } from '../types/job'
 import { fetchJobs, fetchCategories } from '../services/remotiveApi'
 
-type Status = 'idle' | 'loading' | 'error' | 'empty'
+type Status = 'loading' | 'error'
 
 type JobsState = {
   jobs: JobItem[]
   favorites: JobItem[]
   categories: string[]
-  status: Status
+  status: Status | null
   error: string | null
   loadJobs: () => Promise<void>
   loadCategories: () => Promise<void>
@@ -30,7 +30,7 @@ export const useJobsStore = create<JobsState>()(
       jobs: [],
       favorites: [],
       categories: [],
-      status: 'idle',
+      status: null,
       error: null,
 
       async loadJobs() {
@@ -39,7 +39,7 @@ export const useJobsStore = create<JobsState>()(
           const jobs = await fetchJobs()
           set({
             jobs,
-            status: jobs.length === 0 ? 'empty' : 'idle',
+            status: null,
           })
         } catch (e) {
           set({

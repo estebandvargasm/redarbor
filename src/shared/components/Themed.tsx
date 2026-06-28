@@ -13,7 +13,7 @@ type ThemeProps = {
   darkColor?: string;
 };
 
-export type TextProps = ThemeProps & DefaultText['props'];
+type TextProps = ThemeProps & DefaultText['props'];
 type ViewProps = ThemeProps & DefaultView['props'];
 
 function useThemeColor(
