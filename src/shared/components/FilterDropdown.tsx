@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Modal, FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Modal, FlatList, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import Colors from '@/src/shared/theme/Colors'
 
 interface FilterDropdownProps {
   label: string
@@ -11,23 +12,32 @@ interface FilterDropdownProps {
 
 export default function FilterDropdown({ label, options, selected, onSelect }: FilterDropdownProps) {
   const [open, setOpen] = useState(false)
+  const colorScheme = useColorScheme()
+  const colors = Colors[colorScheme ?? 'light']
 
   const displayText = selected ?? label
 
   return (
     <>
-      <Pressable style={styles.trigger} onPress={() => setOpen(true)}>
-        <Text style={[styles.triggerText, !!selected && styles.triggerTextActive]} numberOfLines={1}>
+      <Pressable style={[styles.trigger, { backgroundColor: colors.card }]} onPress={() => setOpen(true)}>
+        <Text
+          style={[
+            styles.triggerText,
+            { color: selected ? colors.text : colors.muted },
+            !!selected && styles.triggerTextActive,
+          ]}
+          numberOfLines={1}
+        >
           {displayText}
         </Text>
-        <Ionicons name="chevron-down" size={12} color={selected ? '#3b6df0' : '#b0b3c1'} />
+        <Ionicons name="chevron-down" size={12} color={selected ? colors.tint : colors.muted} />
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.overlay} onPress={() => setOpen(false)}>
-          <View style={styles.sheet}>
-            <View style={styles.handle} />
-            <Text style={styles.sheetTitle}>{label}</Text>
+          <View style={[styles.sheet, { backgroundColor: colors.card }]}>
+            <View style={[styles.handle, { backgroundColor: colors.border }]} />
+            <Text style={[styles.sheetTitle, { color: colors.text }]}>{label}</Text>
 
             <FlatList
               data={['All', ...options]}
@@ -37,16 +47,25 @@ export default function FilterDropdown({ label, options, selected, onSelect }: F
                 const isSelected = isAll ? selected === null : item === selected
                 return (
                   <Pressable
-                    style={[styles.option, isSelected && styles.optionSelected]}
+                    style={[
+                      styles.option,
+                      isSelected && { backgroundColor: colorScheme === 'dark' ? colors.surface : '#eef2ff' },
+                    ]}
                     onPress={() => {
                       onSelect(isAll ? null : item)
                       setOpen(false)
                     }}
                   >
-                    <Text style={[styles.optionText, isSelected && styles.optionTextSelected]}>
+                    <Text
+                      style={[
+                        styles.optionText,
+                        { color: isSelected ? colors.tint : colors.text },
+                        isSelected && styles.optionTextSelected,
+                      ]}
+                    >
                       {item}
                     </Text>
-                    {isSelected && <Ionicons name="checkmark" size={18} color="#3b6df0" />}
+                    {isSelected && <Ionicons name="checkmark" size={18} color={colors.tint} />}
                   </Pressable>
                 )
               }}
@@ -63,7 +82,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#ffffff',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -71,11 +89,9 @@ const styles = StyleSheet.create({
   },
   triggerText: {
     fontSize: 13,
-    color: '#8e92a2',
     flex: 1,
   },
   triggerTextActive: {
-    color: '#1a1a2e',
     fontWeight: '500',
   },
   overlay: {
@@ -84,7 +100,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#ffffff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingBottom: 34,
@@ -93,7 +108,6 @@ const styles = StyleSheet.create({
   handle: {
     width: 36,
     height: 4,
-    backgroundColor: '#d0d3dc',
     borderRadius: 2,
     alignSelf: 'center',
     marginTop: 12,
@@ -102,7 +116,6 @@ const styles = StyleSheet.create({
   sheetTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#1a1a2e',
     marginBottom: 8,
     paddingHorizontal: 20,
   },
@@ -113,15 +126,10 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 20,
   },
-  optionSelected: {
-    backgroundColor: '#eef2ff',
-  },
   optionText: {
     fontSize: 15,
-    color: '#1a1a2e',
   },
   optionTextSelected: {
     fontWeight: '600',
-    color: '#3b6df0',
   },
 })

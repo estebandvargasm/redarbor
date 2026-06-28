@@ -5,16 +5,20 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useColorScheme,
   View,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { JobListItem } from '@/src/features/jobs/components/JobListItem'
 import { useJobsStore } from '@/src/features/jobs/state/jobsStore'
 import FilterDropdown from '@/src/shared/components/FilterDropdown'
+import Colors from '@/src/shared/theme/Colors'
 
 export default function JobsListScreen() {
   const { jobs, categories, status, error, loadJobs, loadCategories, toggleFavorite, isFavorite } =
     useJobsStore()
+  const colorScheme = useColorScheme()
+  const colors = Colors[colorScheme ?? 'light']
 
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
@@ -44,30 +48,30 @@ export default function JobsListScreen() {
 
   if (status === 'loading' && jobs.length === 0) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#3b6df0" />
-        <Text style={styles.centeredText}>Cargando empleos...</Text>
+      <View style={[styles.centered, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.tint} />
+        <Text style={[styles.centeredText, { color: colors.muted }]}>Cargando empleos...</Text>
       </View>
     )
   }
 
   if (status === 'error') {
     return (
-      <View style={styles.centered}>
-        <Ionicons name="cloud-offline-outline" size={48} color="#b0b3c1" />
-        <Text style={styles.centeredText}>{error}</Text>
+      <View style={[styles.centered, { backgroundColor: colors.background }]}>
+        <Ionicons name="cloud-offline-outline" size={48} color={colors.muted} />
+        <Text style={[styles.centeredText, { color: colors.muted }]}>{error}</Text>
       </View>
     )
   }
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={18} color="#8e92a2" style={styles.searchIcon} />
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
+        <Ionicons name="search-outline" size={18} color={colors.muted} style={styles.searchIcon} />
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: colors.text }]}
           placeholder="Buscar por título o empresa..."
-          placeholderTextColor="#b0b3c1"
+          placeholderTextColor={colors.muted}
           value={searchQuery}
           onChangeText={setSearchQuery}
           autoCorrect={false}
@@ -98,8 +102,8 @@ export default function JobsListScreen() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="briefcase-outline" size={56} color="#d0d3dc" />
-            <Text style={styles.emptyText}>
+            <Ionicons name="briefcase-outline" size={56} color={colors.muted} />
+            <Text style={[styles.emptyText, { color: colors.muted }]}>
               {searchQuery || categoryFilter || typeFilter
                 ? 'No se encontraron empleos con los filtros seleccionados.'
                 : 'No hay empleos disponibles en este momento.'}
@@ -121,19 +125,16 @@ export default function JobsListScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#f5f6fa',
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
-    backgroundColor: '#f5f6fa',
     gap: 16,
   },
   centeredText: {
     fontSize: 15,
-    color: '#8e92a2',
     textAlign: 'center',
   },
   searchContainer: {
@@ -141,7 +142,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 12,
     marginTop: 12,
-    backgroundColor: '#ffffff',
     borderRadius: 14,
     paddingHorizontal: 14,
   },
@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#1a1a2e',
   },
   filters: {
     flexDirection: 'row',
@@ -170,7 +169,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 15,
-    color: '#8e92a2',
     textAlign: 'center',
     lineHeight: 22,
   },

@@ -3,6 +3,7 @@ import { View, Pressable, Text, StyleSheet, useColorScheme } from 'react-native'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Colors from '@/src/shared/theme/Colors'
 
 export default function CustomTabBar({
   state,
@@ -11,6 +12,7 @@ export default function CustomTabBar({
 }: BottomTabBarProps) {
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
+  const colors = Colors[colorScheme ?? 'light']
 
   const insets = useSafeAreaInsets()
 
@@ -27,13 +29,8 @@ export default function CustomTabBar({
         style={[
           styles.container,
           {
-            backgroundColor: isDark
-              ? '#1a1a2e'
-              : '#ffffff',
-
-            borderColor: isDark
-              ? 'rgba(255,255,255,.08)'
-              : '#e5e7eb',
+            backgroundColor: colors.card,
+            borderColor: colors.border,
           },
         ]}
       >
@@ -92,33 +89,21 @@ export default function CustomTabBar({
               style={[
                 styles.tab,
                 focused && {
-                  backgroundColor: isDark
-                    ? 'rgba(255,255,255,.12)'
-                    : '#FFFFFF',
+                  backgroundColor: isDark ? '#ffffff12' : '#FFFFFF',
                 },
               ]}
             >
               <Ionicons
                 name={iconName}
                 size={22}
-                color={
-                  focused
-                    ? '#2563EB'
-                    : isDark
-                    ? 'rgba(255,255,255,.55)'
-                    : 'rgba(0,0,0,.45)'
-                }
+                color={focused ? colors.tint : colors.tabIconDefault}
               />
 
               <Text
                 style={{
                   fontSize: 11,
                   fontWeight: '700',
-                  color: focused
-                    ? '#2563EB'
-                    : isDark
-                    ? 'rgba(255,255,255,.55)'
-                    : 'rgba(0,0,0,.45)',
+                  color: focused ? colors.tint : colors.tabIconDefault,
                 }}
               >
                 {label}

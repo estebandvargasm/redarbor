@@ -13,11 +13,12 @@ import { Ionicons } from '@expo/vector-icons'
 import { WebView } from 'react-native-webview'
 import { Text, View } from '@/src/shared/components/Themed'
 import { useJobsStore } from '@/src/features/jobs/state/jobsStore'
+import Colors from '@/src/shared/theme/Colors'
 
 function wrapHtml(html: string, dark: boolean): string {
-  const bg = dark ? '#0f0f1a' : '#f5f6fa'
+  const bg = dark ? '#12121f' : '#f5f6fa'
   const text = dark ? '#d1d3db' : '#3d3f4e'
-  const link = '#3b6df0'
+  const link = dark ? '#6b8fff' : '#3b6df0'
   const cardBg = dark ? '#1a1a2e' : '#ffffff'
 
   return `<!DOCTYPE html>
@@ -61,6 +62,7 @@ export default function JobDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const colorScheme = useColorScheme()
+  const colors = Colors[colorScheme ?? 'light']
 
   const jobs = useJobsStore((s) => s.jobs)
   const favorites = useJobsStore((s) => s.favorites)
@@ -73,10 +75,17 @@ export default function JobDetailScreen() {
 
   if (!job) {
     return (
-      <View style={styles.centered}>
-        <Stack.Screen options={{ title: 'Empleo', headerStyle: { backgroundColor: '#f5f6fa' } }} />
-        <Ionicons name="alert-circle-outline" size={48} color="#b0b3c1" />
-        <Text style={styles.notFoundText}>No se encontró el empleo solicitado.</Text>
+      <View style={[styles.centered, { backgroundColor: colors.background }]}>
+        <Stack.Screen
+          options={{
+            title: 'Empleo',
+            headerTintColor: colors.text,
+            headerStyle: { backgroundColor: colors.background },
+            headerTitleStyle: { fontWeight: '700', fontSize: 20 },
+          }}
+        />
+        <Ionicons name="alert-circle-outline" size={48} color={colors.muted} />
+        <Text style={[styles.notFoundText, { color: colors.muted }]}>No se encontró el empleo solicitado.</Text>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backBtnText}>Volver</Text>
         </TouchableOpacity>
@@ -97,38 +106,47 @@ export default function JobDetailScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Stack.Screen options={{ title: job.companyName, headerStyle: { backgroundColor: '#f5f6fa' } }} />
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+      <Stack.Screen
+        options={{
+          title: job.companyName,
+          headerTintColor: colors.text,
+          headerStyle: { backgroundColor: colors.background },
+          headerTitleStyle: { fontWeight: '700', fontSize: 20 },
+        }}
+      />
 
       <View style={styles.header}>
         {job.companyLogoUrl ? (
           <Image source={{ uri: job.companyLogoUrl }} style={styles.logo} />
         ) : (
-          <View style={styles.logoPlaceholder}>
-            <Ionicons name="business-outline" size={36} color="#b0b3c1" />
+          <View style={[styles.logoPlaceholder, { backgroundColor: colors.inputBg }]}>
+            <Ionicons name="business-outline" size={36} color={colors.muted} />
           </View>
         )}
 
-        <Text style={styles.jobTitle}>{job.title}</Text>
+        <Text style={[styles.jobTitle, { color: colors.text }]}>{job.title}</Text>
         <Text style={styles.companyName}>{job.companyName}</Text>
       </View>
 
       <View style={styles.chipsRow}>
-        <View style={styles.chip}>
-          <Ionicons name="location-outline" size={14} color="#3b6df0" />
-          <Text style={styles.chipText}>{job.candidateLocation}</Text>
+        <View style={[styles.chip, { backgroundColor: colors.card }]}>
+          <Ionicons name="location-outline" size={14} color={colors.tint} />
+          <Text style={[styles.chipText, { color: colors.muted }]}>{job.candidateLocation}</Text>
         </View>
-        <View style={styles.chip}>
-          <Ionicons name="time-outline" size={14} color="#3b6df0" />
-          <Text style={styles.chipText}>{new Date(job.publicationDate).toLocaleDateString()}</Text>
+        <View style={[styles.chip, { backgroundColor: colors.card }]}>
+          <Ionicons name="time-outline" size={14} color={colors.tint} />
+          <Text style={[styles.chipText, { color: colors.muted }]}>
+            {new Date(job.publicationDate).toLocaleDateString()}
+          </Text>
         </View>
-        <View style={styles.chip}>
-          <Ionicons name="pricetag-outline" size={14} color="#3b6df0" />
-          <Text style={styles.chipText}>{job.category}</Text>
+        <View style={[styles.chip, { backgroundColor: colors.card }]}>
+          <Ionicons name="pricetag-outline" size={14} color={colors.tint} />
+          <Text style={[styles.chipText, { color: colors.muted }]}>{job.category}</Text>
         </View>
-        <View style={styles.chip}>
-          <Ionicons name="briefcase-outline" size={14} color="#3b6df0" />
-          <Text style={styles.chipText}>{job.jobType}</Text>
+        <View style={[styles.chip, { backgroundColor: colors.card }]}>
+          <Ionicons name="briefcase-outline" size={14} color={colors.tint} />
+          <Text style={[styles.chipText, { color: colors.muted }]}>{job.jobType}</Text>
         </View>
       </View>
 
@@ -143,19 +161,17 @@ export default function JobDetailScreen() {
       ) : null}
 
       {job.salary ? (
-        <View style={styles.salaryCard}>
-          <View style={styles.salaryInner}>
-            <Ionicons name="cash-outline" size={22} color="#22c55e" />
-            <View>
-              <Text style={styles.salaryLabel}>Salario</Text>
-              <Text style={styles.salaryValue}>{job.salary}</Text>
-            </View>
+        <View style={[styles.salaryCard, { backgroundColor: colors.card }]}>
+          <Ionicons name="cash-outline" size={24} color={colors.success} />
+          <View style={styles.salaryTextCol} lightColor={colors.card} darkColor={colors.card}>
+            <Text style={styles.salaryLabel}>Salario</Text>
+            <Text style={[styles.salaryValue, { color: colors.text }]}>{job.salary}</Text>
           </View>
         </View>
       ) : null}
 
-      <View style={styles.descriptionCard}>
-        <Text style={styles.sectionTitle}>Descripción</Text>
+      <View style={[styles.descriptionCard, { backgroundColor: colors.card }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Descripción</Text>
         <WebView
           style={[styles.webview, { height: webHeight }]}
           source={{ html: wrapHtml(job.descriptionHtml, colorScheme === 'dark') }}
@@ -169,38 +185,34 @@ export default function JobDetailScreen() {
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity
-          style={styles.applyButton}
-          onPress={handleApply}
-          activeOpacity={0.85}
-        >
+        <TouchableOpacity style={styles.applyButton} onPress={handleApply} activeOpacity={0.85}>
           <Ionicons name="open-outline" size={20} color="#fff" />
           <Text style={styles.applyButtonText}>Aplicar ahora</Text>
         </TouchableOpacity>
 
         <View style={styles.secondaryActions}>
           <TouchableOpacity
-            style={styles.iconButton}
+            style={[styles.iconButton, { backgroundColor: colors.card }]}
             onPress={() => toggleFavorite(job)}
             activeOpacity={0.7}
           >
             <Ionicons
               name={fav ? 'heart' : 'heart-outline'}
               size={24}
-              color={fav ? '#ef4444' : '#8e92a2'}
+              color={fav ? colors.danger : colors.muted}
             />
-            <Text style={[styles.iconButtonText, fav && { color: '#ef4444' }]}>
+            <Text style={[styles.iconButtonText, fav ? { color: colors.danger } : { color: colors.muted }]}>
               {fav ? 'Guardado' : 'Favorito'}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.iconButton}
+            style={[styles.iconButton, { backgroundColor: colors.card }]}
             onPress={handleShare}
             activeOpacity={0.7}
           >
-            <Ionicons name="share-outline" size={24} color="#8e92a2" />
-            <Text style={styles.iconButtonText}>Compartir</Text>
+            <Ionicons name="share-outline" size={24} color={colors.muted} />
+            <Text style={[styles.iconButtonText, { color: colors.muted }]}>Compartir</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -213,19 +225,16 @@ export default function JobDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f6fa',
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
-    backgroundColor: '#f5f6fa',
     gap: 16,
   },
   notFoundText: {
     fontSize: 15,
-    color: '#8e92a2',
     textAlign: 'center',
   },
   backBtn: {
@@ -240,35 +249,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   header: {
-    padding: 24,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 16,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-    marginHorizontal: 12,
-    marginTop: 12,
-    borderRadius: 16,
   },
   logo: {
     width: 72,
     height: 72,
     borderRadius: 16,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   logoPlaceholder: {
     width: 72,
     height: 72,
     borderRadius: 16,
-    marginBottom: 16,
-    backgroundColor: '#f0f1f5',
+    marginBottom: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
   jobTitle: {
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: '700',
     textAlign: 'center',
-    color: '#1a1a2e',
-    lineHeight: 26,
-    marginBottom: 4,
+    lineHeight: 28,
+    marginBottom: 2,
   },
   companyName: {
     fontSize: 15,
@@ -279,28 +284,26 @@ const styles = StyleSheet.create({
   chipsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 12,
-    paddingTop: 12,
+    paddingHorizontal: 16,
+    paddingTop: 8,
     gap: 8,
   },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: '#ffffff',
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 20,
   },
   chipText: {
     fontSize: 12,
-    color: '#5c5f6e',
     fontWeight: '500',
   },
   tagsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingTop: 8,
     gap: 6,
   },
@@ -318,37 +321,35 @@ const styles = StyleSheet.create({
   salaryCard: {
     marginHorizontal: 12,
     marginTop: 12,
-    backgroundColor: '#f0fdf4',
-    borderRadius: 14,
-    padding: 16,
-  },
-  salaryInner: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
+    borderRadius: 14,
+    padding: 18,
   },
   salaryLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
-    color: '#15803d',
+    color: '#22c55e',
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 1,
+    marginBottom: 2,
+  },
+  salaryTextCol: {
+    flex: 1,
   },
   salaryValue: {
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: '700',
-    color: '#166534',
   },
   descriptionCard: {
     margin: 12,
-    backgroundColor: '#ffffff',
     borderRadius: 14,
     padding: 20,
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#1a1a2e',
     marginBottom: 14,
   },
   webview: {
@@ -382,13 +383,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: '#ffffff',
     paddingVertical: 12,
     borderRadius: 14,
   },
   iconButtonText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#8e92a2',
   },
 })

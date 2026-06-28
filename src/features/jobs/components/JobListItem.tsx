@@ -1,7 +1,8 @@
 import { router } from 'expo-router'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import type { JobItem } from '../types/job'
+import Colors from '@/src/shared/theme/Colors'
 
 type Props = {
   job: JobItem
@@ -10,9 +11,12 @@ type Props = {
 }
 
 export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
+  const colorScheme = useColorScheme()
+  const colors = Colors[colorScheme ?? 'light']
+
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, { backgroundColor: colors.card }]}
       activeOpacity={0.7}
       onPress={() => router.push({ pathname: '/job/[id]', params: { id: job.id } })}
     >
@@ -20,21 +24,21 @@ export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
         {job.companyLogoUrl ? (
           <Image source={{ uri: job.companyLogoUrl }} style={styles.logo} />
         ) : (
-          <View style={styles.logoPlaceholder}>
-            <Ionicons name="business-outline" size={22} color="#b0b3c1" />
+          <View style={[styles.logoPlaceholder, { backgroundColor: colors.inputBg }]}>
+            <Ionicons name="business-outline" size={22} color={colors.muted} />
           </View>
         )}
 
         <View style={styles.info}>
-          <Text style={styles.title} numberOfLines={2}>{job.title}</Text>
-          <Text style={styles.company} numberOfLines={1}>{job.companyName}</Text>
+          <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>{job.title}</Text>
+          <Text style={[styles.company, { color: colors.tint }]} numberOfLines={1}>{job.companyName}</Text>
           <View style={styles.metaRow}>
-            <Ionicons name="location-outline" size={11} color="#8e92a2" />
-            <Text style={styles.location} numberOfLines={1}>{job.candidateLocation}</Text>
+            <Ionicons name="location-outline" size={11} color={colors.muted} />
+            <Text style={[styles.location, { color: colors.muted }]} numberOfLines={1}>{job.candidateLocation}</Text>
           </View>
           <View style={styles.metaRow}>
-            <Ionicons name="time-outline" size={11} color="#8e92a2" />
-            <Text style={styles.date}>
+            <Ionicons name="time-outline" size={11} color={colors.muted} />
+            <Text style={[styles.date, { color: colors.muted }]}>
               {job.category} • {job.jobType} • {new Date(job.publicationDate).toLocaleDateString()}
             </Text>
           </View>
@@ -48,7 +52,7 @@ export function JobListItem({ job, isFavorite, onToggleFavorite }: Props) {
           <Ionicons
             name={isFavorite ? 'heart' : 'heart-outline'}
             size={20}
-            color={isFavorite ? '#ef4444' : '#b0b3c1'}
+            color={isFavorite ? '#ef4444' : colors.muted}
           />
         </TouchableOpacity>
       </View>
@@ -60,7 +64,6 @@ const styles = StyleSheet.create({
   card: {
     marginHorizontal: 12,
     marginVertical: 5,
-    backgroundColor: '#ffffff',
     borderRadius: 14,
   },
   cardInner: {
@@ -79,7 +82,6 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 10,
     marginRight: 14,
-    backgroundColor: '#f0f1f5',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -90,12 +92,10 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: '600',
     fontSize: 15,
-    color: '#1a1a2e',
     lineHeight: 20,
   },
   company: {
     fontSize: 13,
-    color: '#3b6df0',
     fontWeight: '500',
   },
   metaRow: {
@@ -106,12 +106,10 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 12,
-    color: '#8e92a2',
     flex: 1,
   },
   date: {
     fontSize: 11,
-    color: '#8e92a2',
     flex: 1,
   },
   favoriteButton: {
