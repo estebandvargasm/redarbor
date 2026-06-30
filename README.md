@@ -2,10 +2,6 @@
 
 App de búsqueda de empleos remotos. Construida como parte del proceso de selección para el cargo de **Senior UI Developer** en **Redarbor**. Consume la API pública de [Remotive](https://remotive.com/api).
 
-<p align="center">
-  <img src="./src/assets/images/icon.png" width="120" />
-</p>
-
 ---
 
 ## El reto
