@@ -55,7 +55,7 @@ export default function CustomTabBar({
             case 'index':
               iconName = focused ? 'briefcase' : 'briefcase-outline'
               break
-            case 'favoritesScreen':
+            case 'favorites':
               iconName = focused ? 'heart' : 'heart-outline'
               break
           }

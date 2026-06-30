@@ -31,7 +31,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="favoritesScreen"
+        name="favorites"
         options={{
           title: 'Favoritos',
         }}

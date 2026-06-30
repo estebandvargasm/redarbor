@@ -124,6 +124,67 @@ npm test           # Ejecuta tests
 
 ---
 
+## Arquitectura
+
+El proyecto combina dos patrones según el tipo de código:
+
+### Arquitectura por features (`features/`)
+
+Cada dominio de negocio se encapsula en su propio directorio con todo lo que necesita:
+
+```
+features/jobs/
+├── components/    # UI específica del dominio (JobListItem)
+├── services/      # Comunicación con APIs externas (remotiveApi)
+├── state/         # Lógica de estado (Zustand store)
+└── types/         # Tipos de datos del dominio (JobItem)
+```
+
+**Beneficios:** cohesión alta, acoplamiento bajo. Si mañana se agrega una feature de "notificaciones", va en `features/notifications/` sin tocar nada de `jobs/`. Cada feature es autónoma: el store exporta el hook, las pantallas lo consumen, los servicios son invisibles para la UI.
+
+### Arquitectura por componentes compartidos (`shared/`)
+
+Todo lo que usan múltiples features o que no pertenece a un dominio específico:
+
+```
+shared/
+├── components/    # CustomTabBar, FilterDropdown (agnósticos al dominio)
+├── hooks/         # useHeartAnimation (lógica de UI reutilizable)
+└── theme/         # Colors (tokens de diseño light/dark)
+```
+
+**Beneficios:** DRY sin sobre-ingeniería. Los componentes compartidos reciben props genéricas (`options`, `onSelect`) y no saben nada del dominio de empleos. El hook `useHeartAnimation` lo usan tanto `JobListItem` como `[id].tsx` sin acoplarse entre sí.
+
+### Capa de rutas (`app/`)
+
+Expo Router mapea el sistema de archivos a rutas automáticamente. Cada pantalla es un componente de React que consume los stores de Zustand directamente. No hay capa de "servicios de UI" ni ViewModels intermedios: las pantallas leen del store, renderizan y despachan acciones.
+
+```
+Pantalla → useJobsStore() → render
+              ↕
+         jobsStore (Zustand + AsyncStorage)
+              ↕
+         remotiveApi (Axios → Remotive API)
+```
+
+### Flujo de datos
+
+```
+API de Remotive
+    ↓ axios.get
+remotiveApi.ts (mapeo a JobItem[])
+    ↓ fetchJobs()
+jobsStore.ts (Zustand)
+    ↓ useJobsStore()
+Pantallas (index.tsx, favorites.tsx, [id].tsx)
+    ↓ props
+JobListItem, FilterDropdown, etc.
+```
+
+El store es la única fuente de verdad. Las pantallas no se pasan datos entre sí: cada una lee del store y navega por `id`. La persistencia de favoritos es transparente gracias al middleware `persist` de Zustand.
+
+---
+
 ## Estructura del proyecto
 
 ```
@@ -134,7 +195,7 @@ src/
 │   ├── (tabs)/                 # Tab navigator
 │   │   ├── _layout.tsx         # Configuración de tabs + CustomTabBar
 │   │   ├── index.tsx           # Listado de empleos con búsqueda y filtros
-│   │   └── favoritesScreen.tsx # Favoritos guardados
+│   │   └── favorites.tsx           # Favoritos guardados
 │   └── job/
 │       └── [id].tsx            # Detalle de empleo (HTML + botones)
 │
