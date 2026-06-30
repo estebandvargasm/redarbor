@@ -5,14 +5,15 @@ import {
   ScrollView,
   Share,
   StyleSheet,
+  Text,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from 'react-native'
 import { useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { WebView } from 'react-native-webview'
-import { Text, View } from '@/src/shared/components/Themed'
 import { useJobsStore } from '@/src/features/jobs/state/jobsStore'
 import Colors from '@/src/shared/theme/Colors'
 
@@ -285,7 +286,6 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    backgroundColor: 'transparent',
   },
   infoDivider: {
     height: 1,

@@ -1,8 +1,7 @@
-import { FlatList, StyleSheet, Text, useColorScheme } from 'react-native'
+import { FlatList, StyleSheet, Text, useColorScheme, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { JobListItem } from '@/src/features/jobs/components/JobListItem'
 import { useJobsStore } from '@/src/features/jobs/state/jobsStore'
-import { View } from '@/src/shared/components/Themed'
 import Colors from '@/src/shared/theme/Colors'
 
 export default function FavoritesScreen() {
