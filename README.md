@@ -115,11 +115,13 @@ Esto abre el servidor Metro. Una vez corriendo, tienes estas opciones:
 ## Scripts disponibles
 
 ```bash
-npm start          # Inicia Metro
-npm run android    # Abre en Android Emulator
-npm run ios        # Abre en iOS Simulator
-npm run web        # Abre en navegador
-npm test           # Ejecuta tests
+npm start              # Inicia Metro
+npm run android        # Abre en Android Emulator
+npm run ios            # Abre en iOS Simulator
+npm run web            # Abre en navegador
+npm test               # Ejecuta tests en modo watch
+npx jest --no-watchAll # Una sola ejecución (CI)
+npx tsc --noEmit       # Verifica tipos sin emitir JS
 ```
 
 ---
@@ -239,6 +241,54 @@ src/
 
 ---
 
+---
+
+## Tests
+
+El proyecto incluye **30 tests** en 4 suites, enfocados en la capa de lógica de negocio y componentes con estado o interacción:
+
+Los tests priorizan la lógica de negocio (store y servicios) y los componentes interactivos clave, que son las áreas más propensas a errores y regresiones.
+
+| Suite | Archivo | Tests | Qué cubre |
+|---|---|---|---|
+| `jobsStore` | `state/__tests__/jobsStore.test.ts` | 10 | toggle/add/remove favorites, carga con éxito/error, persistencia parcial |
+| `remotiveApi` | `services/__tests__/remotiveApi.test.ts` | 6 | mapeo snake_case→camelCase, null→undefined, URLs, propagación de errores |
+| `JobListItem` | `components/__tests__/JobListItem.test.tsx` | 7 | renderizado, logo/placeholder, corazón filled/outline, toggle fav, navegación |
+| `FilterDropdown` | `shared/components/__tests__/FilterDropdown.test.tsx` | 7 | label/selected, apertura del sheet, opciones + "All", selección, checkmark |
+
+### Ejecutar
+
+```bash
+npm test                 # Modo watch (interactivo)
+npx jest --no-watchAll   # Una sola ejecución (CI)
+npx tsc --noEmit         # Verifica tipos sin emitir JS
+```
+
+### Setup
+
+| Herramienta | Rol |
+|---|---|
+| **Jest 29** | Test runner |
+| **jest-expo** | Preset con mocks de React Native, Metro, fuentes |
+| **@testing-library/react-native v12** | Renderizado de componentes, queries semánticos, fireEvent |
+| **@types/jest** | Tipos globales (`jest.fn()`, `describe`, `expect`) |
+
+Los tipos de Jest se cargan globalmente desde `jest.d.ts` en la raíz del proyecto, incluido en el `tsconfig`. Cada suite mockea sus dependencias externas en el propio archivo (Axios, AsyncStorage, Animated, expo-router).
+
+### Estructura
+
+```
+src/
+├── features/jobs/
+│   ├── components/__tests__/JobListItem.test.tsx
+│   ├── services/__tests__/remotiveApi.test.ts
+│   └── state/__tests__/jobsStore.test.ts
+└── shared/
+    └── components/__tests__/FilterDropdown.test.tsx
+```
+
+---
+
 ## API
 
 La app consume la API pública de [Remotive](https://remotive.com/api):
@@ -263,7 +313,7 @@ No requiere API key. El cliente HTTP está en `src/features/jobs/services/remoti
 - La app sigue la preferencia del sistema (`userInterfaceStyle: "automatic"`)
 
 ### La descripción HTML se ve mal
-- El HTML viene de MS Office/Word en muchas ofertas. La app lo sanitiza con CSS forzado para que sea legible en ambos modos
+- Las ofertas de Remotive contienen HTML crudo con inline styles (a veces desde MS Word). La app lo envuelve con CSS propio para forzar legibilidad en ambos modos, scroll de tablas e imágenes responsivas.
 
 ### Error de dependencias
 ```bash
