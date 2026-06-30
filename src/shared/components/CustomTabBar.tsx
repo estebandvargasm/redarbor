@@ -47,12 +47,7 @@ export default function CustomTabBar({
           const focused = state.index === index
           const { options } = descriptors[route.key]
 
-          const label =
-            typeof options.tabBarLabel === 'string'
-              ? options.tabBarLabel
-              : typeof options.title === 'string'
-              ? options.title
-              : route.name
+          const label = (options.tabBarLabel as string) ?? options.title ?? route.name
 
           let iconName: keyof typeof Ionicons.glyphMap = 'ellipse'
 
@@ -76,18 +71,10 @@ export default function CustomTabBar({
             }
           }
 
-          const onLongPress = () => {
-            navigation.emit({
-              type: 'tabLongPress',
-              target: route.key,
-            })
-          }
-
           return (
             <Pressable
               key={route.key}
               onPress={onPress}
-              onLongPress={onLongPress}
               onLayout={(e) => {
                 tabPositions.current[index] = {
                   x: e.nativeEvent.layout.x,

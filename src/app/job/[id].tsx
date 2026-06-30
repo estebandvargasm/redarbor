@@ -11,7 +11,8 @@ import {
   View,
 } from 'react-native'
 import { useState } from 'react'
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
+import { useHeartAnimation } from '@/src/shared/hooks/useHeartAnimation'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { WebView } from 'react-native-webview'
@@ -19,7 +20,6 @@ import { useJobsStore } from '@/src/features/jobs/state/jobsStore'
 import Colors from '@/src/shared/theme/Colors'
 
 function wrapHtml(html: string, dark: boolean): string {
-  const bg = dark ? '#12121f' : '#f5f6fa'
   const text = dark ? '#d1d3db' : '#3d3f4e'
   const link = dark ? '#6b8fff' : '#3b6df0'
   const cardBg = dark ? '#1a1a2e' : '#ffffff'
@@ -77,16 +77,10 @@ export default function JobDetailScreen() {
   const job = [...favorites, ...jobs].find((j) => j.id === jobId)
   const [webHeight, setWebHeight] = useState(400)
 
-  const heartScale = useSharedValue(1)
-
-  const animatedHeart = useAnimatedStyle(() => ({
-    transform: [{ scale: heartScale.value }],
-  }))
+  const { animatedStyle: animatedHeart, play: playHeart } = useHeartAnimation()
 
   const handleToggleFavorite = () => {
-    heartScale.value = withSpring(0.4, { damping: 10, stiffness: 300 }, () => {
-      heartScale.value = withSpring(1, { damping: 6 })
-    })
+    playHeart()
     if (job) toggleFavorite(job)
   }
 
@@ -234,9 +228,6 @@ export default function JobDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   centered: {
     flex: 1,
     justifyContent: 'center',

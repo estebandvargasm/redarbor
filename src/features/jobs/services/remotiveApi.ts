@@ -26,8 +26,14 @@ type RemotiveJobsResponse = {
   jobs: RemotiveJob[]
 }
 
-function mapToJobItem(job: RemotiveJob): JobItem {
-  return {
+export async function fetchJobs(): Promise<JobItem[]> {
+  const response = await axios.get<RemotiveJobsResponse>(
+    `${REMOTIVE_BASE_URL}/remote-jobs`,
+  )
+
+  const { jobs } = response.data
+
+  return jobs.map((job) => ({
     id: job.id,
     title: job.title,
     companyName: job.company_name,
@@ -40,17 +46,7 @@ function mapToJobItem(job: RemotiveJob): JobItem {
     salary: job.salary ?? undefined,
     descriptionHtml: job.description,
     applyUrl: job.url,
-  }
-}
-
-export async function fetchJobs(): Promise<JobItem[]> {
-  const response = await axios.get<RemotiveJobsResponse>(
-    `${REMOTIVE_BASE_URL}/remote-jobs`,
-  )
-
-  const { jobs } = response.data
-
-  return jobs.map(mapToJobItem)
+  }))
 }
 
 type RemotiveCategory = { id: number; name: string; slug: string }
