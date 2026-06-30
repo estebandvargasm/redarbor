@@ -65,11 +65,11 @@ Construir una app en **3-5 días** que permita buscar empleos remotos, ver su de
 
 ## Requisitos
 
-| Qué | Versión | Para qué |
+| Herramienta | Versión | Uso |
 |-----|---------|----------|
 | [Node.js](https://nodejs.org) | ≥ 18 | Runtime de JS |
 | npm | ≥ 9 | Instalar dependencias |
-| [Expo Go](https://expo.dev/go) _(opcional)_ | Última | Probar en celular sin compilar |
+| [Expo Go](https://expo.dev/go) _(opcional)_ | Última | Probar en dispositivo físico sin compilar |
 | Android Studio _(opcional)_ | Última | Emulador Android |
 | Xcode _(opcional, solo macOS)_ | ≥ 15 | Simulador iOS |
 
